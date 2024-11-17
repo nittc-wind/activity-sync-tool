@@ -10,9 +10,6 @@ export default async function Home() {
         <p>Welcome {session?.user?.name}!</p>
         <SignIn />
       </main>
-      <footer className={styles.footer}>
-        <p>ふったー</p>
-      </footer>
     </div>
   );
 }
