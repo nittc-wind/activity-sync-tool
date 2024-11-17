@@ -5,7 +5,16 @@ import Google from "next-auth/providers/google";
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     /* override */
-    Google({ authorization: { params: { scope: "openid email profile https://www.googleapis.com/auth/calendar"}}})
+    Google({
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+          scope: "openid email profile https://www.googleapis.com/auth/calendar"
+        }
+      }
+    })
   ],
   callbacks: {
    async jwt({ token, account }) {
