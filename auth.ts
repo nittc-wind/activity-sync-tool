@@ -1,41 +1,35 @@
 import NextAuth from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import Google from "next-auth/providers/google";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    Google({ authorization: { params: { scope: "https://www.googleapis.com/auth/calendar"}}})
+    /* override */
+    Google({ authorization: { params: { scope: "openid email profile https://www.googleapis.com/auth/calendar"}}})
   ],
   callbacks: {
-   async jwt({ token, user, account}) {
-     if (user) {
-       token.user = user;
-       const u = user as any;
-       token.role = u.role;
-     }
-     if (account) {
+   async jwt({ token, account }) {
+     if (account?.access_token) {
        token.accessToken = account.access_token
-       token.refreshToke = account.refresh_token
      }
      return token
    },
-   session({ session, token }) {
-     token.accessToken
-     return {
-       ...session,
-       user: {
-         ...session.user,
-         role: token.role,
-         accessToken: token.accessToken,
-         refreshToken: token.refreshToken,
-       },
-     };
+   async session({ session, token }) {
+
+     session.accessToken = token.accessToken
+     return session
    },
   }
 })
 
 declare module "next-auth" {
   interface Session {
-    error?: "RefreshTokenError"
+    accessToken: string
   }
 }
 
+declare module "next-auth/jwt" {
+  interface JWT {
+    accessToken: string
+  }
+}

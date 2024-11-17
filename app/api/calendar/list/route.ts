@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   }
 
   const oauth2Client = new google.auth.OAuth2()
-  oauth2Client.setCredentials({access_token: session?.user?.accessToken})
+  oauth2Client.setCredentials({access_token: session?.accessToken})
 
   const calendar: calendar_v3.Calendar = google.calendar({
     version: "v3",
